@@ -1,0 +1,4 @@
+#git ignore file for REDIS_STUDY_FASTAPI
+
+#ignore __pycache__ files
+**/__pycache__
