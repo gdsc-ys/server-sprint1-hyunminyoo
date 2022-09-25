@@ -4,12 +4,13 @@ from starlette.responses import Response
 
 from models.auth_model import LoginReps, LoginReq
 
-router = APIRouter(prefix="auth")
+router = APIRouter(prefix="/auth")
 
 @router.get("/login",
     response_model=LoginReps,
     responses={
-        500: {"model": "ERROR MODEL", "description": "ERROR DESCRIPTION"},
+        # 500: {"model": "ERROR MODEL", "description": "ERROR DESCRIPTION"},
+        500: {"description": "ERROR DESCRIPTION"},
     },
 )
 async def login(req: LoginReq):

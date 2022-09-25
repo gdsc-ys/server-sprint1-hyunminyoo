@@ -1,11 +1,9 @@
+from pydantic.main import BaseModel
 
 
-import string
+class LoginReq(BaseModel):
+    id: str
+    pw: str
 
-
-class LoginReq():
-    id: string
-    pw: string
-
-class LoginReps():
+class LoginReps(BaseModel):
     uid: int
