@@ -29,4 +29,5 @@ async def login(req: LoginReq):
         return Response(f"Login fail")
 
 def checkValidUser(id:str, pw:str):
+    # TODO : check user by comparing id and pw
     return True
