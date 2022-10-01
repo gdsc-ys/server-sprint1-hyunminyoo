@@ -7,10 +7,10 @@ class Middleware(BaseHTTPMiddleware):
     """
     middleware for app
     1. checks session validation
-    2. 
     """
     
     async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+        
         # check session validation
         route = str(request.url).replace(str(request.base_url), '')
         try:
@@ -38,7 +38,9 @@ class Middleware(BaseHTTPMiddleware):
         
         # 실행
         try:
+            print("berfore call next")
             res: Response = await call_next(request)
+            print("affter call next")
         except Exception as e:
             res = JSONResponse(status_code= 500, content= f"Internal Server Error {e}",)
 
@@ -48,4 +50,4 @@ class Middleware(BaseHTTPMiddleware):
 async def session_check(uid: str, sessionID: str) -> bool:
     # compare with session data
     # TODO : check session validation
-    return False
+    return True
