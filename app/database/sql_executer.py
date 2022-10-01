@@ -4,7 +4,7 @@ import app.main as main
 
 # for db write (insert, update, delete)
 async def sql_write(sql, values):
-    pool = main.app.state.master_pool
+    pool = main.app.state.db_pool
     async with pool.acquire() as conn:
         async with conn.cursor(aiomysql.DictCursor) as cur:
             try:
@@ -28,8 +28,8 @@ async def sql_write(sql, values):
                 return e
 
 
-async def __sql_read(sql, values) -> list:
-    pool = main.app.state.master_pool
+async def sql_read(sql, values) -> list:
+    pool = main.app.state.db_pool
     async with pool.acquire() as conn:
         try:
             async with conn.cursor(aiomysql.DictCursor) as cur:
