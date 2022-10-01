@@ -1,33 +1,59 @@
 from datetime import datetime
+from app.models.auth_model import LoginReps
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse, ORJSONResponse
+from fastapi.encoders import jsonable_encoder
 from starlette.responses import Response
+import app.database.sql_executer as db
 
-from models.auth_model import LoginReps, LoginReq
+USER_UNDEFINED = "user_validation_failed"
 
 router = APIRouter(prefix="/auth")
 
+
 @router.get("/login",
-    response_model=LoginReps,
-    responses={
-        # 500: {"model": "ERROR MODEL", "description": "ERROR DESCRIPTION"},
-        500: {"description": "ERROR DESCRIPTION"},
-    },
+            response_model=LoginReps,
 )
-async def login(req: LoginReq):
+async def login(id: str, pw: str):
     """
     login api
-    get user info and log user in
-    return 404 if user info is not in DB
+    get user info and log user in.
+    return uid and session id
+
+    if login false, return 404 if user info is not in DB
     """
     # check if user is valid
-    isUserValid = checkValidUser(req.id, req.pw)
+    loginResult = await checkUserValid(id, pw)
+    if loginResult == USER_UNDEFINED:
+        return ORJSONResponse(status_code=404)
 
-    if isUserValid:
-        return Response(f"Login success")
+    sessionId = await issueSession(loginResult["uid"])
 
-    else:
-        return Response(f"Login fail")
+    return ORJSONResponse(status_code=200, content={"uid": loginResult["uid"], "sessionID": sessionId})
 
-def checkValidUser(id:str, pw:str):
-    # TODO : check user by comparing id and pw
-    return True
+async def checkUserValid(id:str, pw:str):
+    sql = """
+            select *
+            from wdygo.user_info
+            where id = %s and pw = %s
+        """
+    values = (id, pw)
+
+    result = await db.sql_read(sql, values)
+
+    if len(result)>0:
+        return result[0]
+    else :
+        return USER_UNDEFINED
+
+async def issueSession(uid: int):
+    sql = """
+            INSERT INTO wdygo.session
+            (uid, expire_date) VALUES (%s, CURRENT_TIME + INTERVAL 10 MINUTE)
+        """
+
+    values = (uid)
+
+    result = await db.sql_write(sql, values)
+
+    return result
