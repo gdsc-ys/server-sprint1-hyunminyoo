@@ -34,8 +34,7 @@ class Middleware(BaseHTTPMiddleware):
         else :
             if not await session_check(uid, sessionID):
                 # wrong session id
-                res = JSONResponse(status_code= 440, content= f"Session Expired",)
-                return res
+                return JSONResponse(status_code= 440, content= f"Session Expired",)
         
         # 실행
         try:
