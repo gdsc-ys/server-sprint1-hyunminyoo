@@ -31,6 +31,24 @@ async def login(id: str, pw: str):
 
     return ORJSONResponse(status_code=200, content={"uid": loginResult["uid"], "sessionID": sessionId})
 
+@router.get("/logout")
+async def logout(uid: int, sessionID: int):
+    """
+    logout api
+    make session invalid
+    """
+
+    sql = """
+            UPDATE wdygo.session
+            SET expire_date = "1980-01-01 00:00:00"
+            WHERE session_id = %s and uid = %s
+        """
+    values = (sessionID, uid)
+
+    await db.sql_write(sql, values)
+
+
+
 async def checkUserValid(id:str, pw:str):
     sql = """
             select *

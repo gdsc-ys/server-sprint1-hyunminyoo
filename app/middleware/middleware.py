@@ -23,7 +23,7 @@ class Middleware(BaseHTTPMiddleware):
             print(f"Header error. {e}")
             # TODO : delete this part and send error log after testing
             uid = 1
-            sessionID = 9
+            sessionID = 1
 
             # return JSONResponse(status_code=400, content= "Header Error")
 
@@ -77,4 +77,4 @@ async def refresh_session(sessionID: int):
     ten_minute_from_now = datetime.now() + timedelta(minutes = 10)
     values = (ten_minute_from_now, sessionID)
 
-    result = await db.sql_write(sql, values)
+    await db.sql_write(sql, values)
