@@ -2,7 +2,7 @@ from datetime import datetime
 from fastapi import FastAPI, Depends
 from starlette.responses import Response
 from app.middleware.middleware import Middleware
-from app.routes import index, auth, user
+from app.routes import index, auth, user, favorite
 from app.common.config import conf
 import aiomysql
 from starlette_context import context
@@ -25,8 +25,9 @@ async def request_body(request: Request):
 
 #define routers
 app.include_router(index.router)
-app.include_router(auth.router)
-app.include_router(user.router, tags=["User"], dependencies=[Depends(request_body)])
+app.include_router(auth.router, tags=["Auth"])
+app.include_router(user.router, tags=["User"])
+app.include_router(favorite.router, tags=["Favorite"])
 
 # add middleware
 @app.on_event("startup")
