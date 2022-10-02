@@ -1,6 +1,6 @@
 from datetime import datetime
-from app.models.auth_model import LoginReps
-from fastapi import APIRouter
+from app.models.auth_model import LoginReps, RegUserReps, RegUserReq
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse, ORJSONResponse
 from fastapi.encoders import jsonable_encoder
 from starlette.responses import Response
@@ -11,9 +11,7 @@ USER_UNDEFINED = "user_validation_failed"
 router = APIRouter(prefix="/auth")
 
 
-@router.get("/login",
-            response_model=LoginReps,
-)
+@router.get("/login",response_model=LoginReps,)
 async def login(id: str, pw: str):
     """
     login api
@@ -31,6 +29,7 @@ async def login(id: str, pw: str):
 
     return ORJSONResponse(status_code=200, content={"uid": loginResult["uid"], "sessionID": sessionId})
 
+
 @router.get("/logout")
 async def logout(uid: int, sessionID: int):
     """
@@ -47,6 +46,27 @@ async def logout(uid: int, sessionID: int):
 
     await db.sql_write(sql, values)
 
+
+@router.post("/register", response_model=RegUserReps)
+async def register(req: RegUserReq):
+    """
+    register user by
+    adding id, pw, nickname
+    """
+
+    sql = """
+            INSERT INTO wdygo.user_info
+            (id, pw, nickname) 
+            values (%s, %s, %s)
+        """
+    values = (req.id, req.pw, req.nickname)
+
+    uid = await db.sql_write(sql, values)
+
+    if isinstance(uid, Exception):
+        raise HTTPException(status_code=500, detail=str(uid))
+
+    return ORJSONResponse(status_code=200, content={"uid": uid})
 
 
 async def checkUserValid(id:str, pw:str):
