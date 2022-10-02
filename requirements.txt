@@ -137,3 +137,4 @@ wrapt==1.13.2
 XlsxWriter==3.0.3
 yagmail==0.14.245
 yarl==1.7.0
+aioredis-py==2.0.1

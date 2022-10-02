@@ -9,6 +9,8 @@ from starlette_context import context
 import orjson
 from json import JSONDecodeError
 from starlette.requests import Request
+import aioredis
+from typing import AsyncIterator
 
 
 conf = conf()
@@ -44,4 +46,12 @@ async def connect_DB():
         host=conf.DB_HOST, port=conf.DB_PORT,
         user=conf.DB_USER, password=conf.DB_PW,
         db='mysql', autocommit=True, minsize=20, maxsize=40
+    )
+
+# connect redis
+@app.on_event("startup")
+async def init_redis_pool():
+    app.state.redis = aioredis.from_url(
+        f'redis://{conf.REDIS_HOST}:{conf.REDIS_PORT}',
+        decode_responses=True
     )

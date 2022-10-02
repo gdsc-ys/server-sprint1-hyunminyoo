@@ -4,6 +4,7 @@ from app.models.favorite_model import GetFavoritesResp, PostFavoriteReq
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse, ORJSONResponse
 import app.database.sql_executer as db
+import app.main as main
 
 router = APIRouter(prefix='/favorite')
 
@@ -68,3 +69,16 @@ async def delete_favorite(uid: int, favorite_id: int):
     return ORJSONResponse(status_code=200, content= "Success") 
 
 
+@router.get("/redis_test")
+async def redis_test():
+    print("redis test start")
+    redis = main.app.state.redis # set
+    await redis.set(
+        "apple",
+        "banana",
+    )
+    print("affter pool set")
+    print("redis affter set")
+
+    return await redis.get("apple")
+	
