@@ -38,6 +38,13 @@ CREATE TABLE `favorites` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 ```
 
+### random value generate
+```
+INSERT INTO wdygo.favorites
+(station_id, uid)
+VALUES (CEIL(RAND() * (10000)) , CEIL(RAND() * (10000)))
+```
+
 </br></br></br>
 
 # Redis
