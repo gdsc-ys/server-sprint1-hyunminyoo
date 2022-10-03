@@ -74,7 +74,7 @@ async def add_favorite(req: PostFavoriteReq):
     return ORJSONResponse(status_code=200, content= "Success") 
 
 @router.post('/random_generate')
-async def add_favorite():
+async def generate_random_values():
 
     for i in range(0, 100000):
         sql = """
